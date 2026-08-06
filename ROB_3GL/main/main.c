@@ -106,7 +106,7 @@ esp_err_t crear_tareas(void)
                             stack_size,
                             NULL,
                             1,
-                            NULL,
+                            &vTaskSTP1Handle,
                             tskNO_AFFINITY);
 
     xTaskCreatePinnedToCore(vTaskPulsos,
@@ -122,7 +122,7 @@ esp_err_t crear_tareas(void)
                             stack_size,
                             NULL,
                             5,
-                            vTaskSTP1Handle,
+                            NULL,
                             tskNO_AFFINITY);
 
     return ESP_OK;
