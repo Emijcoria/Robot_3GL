@@ -10,10 +10,11 @@
 #define ACELERACION 1000.0f   // pasos/s²
 #define VELOCIDAD_MAX 3000.0f // pasos/s
 
-const char *TAG = "main";
+const char *TAG = "main"; //PARA LOS MENSAJES ESPLOG
 uint32_t delay_us = 0;
-volatile int boton_presionado = 0;
+volatile int boton_presionado = 0; //BANDERA PARA LA RAMPA
 
+//ESPERO ESTE CAMBIO EN PAVILION
 typedef struct {
     int32_t pines[3]; // enable, step, dir
     char nombre_motor[10];
@@ -52,8 +53,12 @@ void app_main(void)
 {
     // 1. Inicializar Hardware con verificación esp_err_t
     if (inicializar_gpios() == ESP_OK) {
-        ESP_LOGI(TAG, "Hardware e Entradas/Salidas inicializados correctamente");
+        ESP_LOGI(TAG, "Entradas/salidas inicializadas correctamente");
     }
+    else {
+        ESP_LOGE(TAG, "Error al inicializar");
+    }
+
 
     // 2. Crear Tareas
     crear_tareas();
@@ -87,7 +92,7 @@ void vTaskTeclado(void *pvParameters)
 
         for (int i = 0; i < 8; i++)
         {
-            if (gpio_get_level(teclaspin[i]) == 0)
+            if (gpio_get_level(teclaspin[i]) == 0) //SON PULLUP
             {
                 select = teclaspin[i];
                 break; // toma el primero que encuentra
@@ -97,7 +102,7 @@ void vTaskTeclado(void *pvParameters)
         if (select != -1)
         {
             boton_presionado = 1; // Se activa la bandera para la rampa
-            if (motor1.motor_handle != NULL)
+            if (motor1.motor_handle != NULL) //VERIFICA
             {
                 xTaskNotify(motor1.motor_handle, (uint32_t)select, eSetValueWithOverwrite);
             }
@@ -115,7 +120,7 @@ void vTaskTeclado(void *pvParameters)
 void vTaskSTP1(void *pvParameters)
 {
     Config_motor *motor = (Config_motor *)pvParameters;
-    uint32_t tecla_notificada = 0;
+    uint32_t tecla_notificada = 0; //RECIBIDO DE SELECT
 
     while (1)
     {
